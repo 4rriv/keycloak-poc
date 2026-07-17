@@ -1,0 +1,84 @@
+services:
+  # 1. Postgres
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # 2. Keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    command: start-dev --import-realm
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak/config:/opt/keycloak/data/import
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  # 3. OAuth2-Proxy
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    environment:
+      OAUTH2_PROXY_PROVIDER: oidc
+      OAUTH2_PROXY_CLIENT_ID: oauth2-proxy
+      OAUTH2_PROXY_CLIENT_SECRET: UFfAkn28ZVj15biBlReRXnqwUJE8ZQZA
+      OAUTH2_PROXY_OIDC_ISSUER_URL: http://keycloak:8080/realms/DemoKC
+      OAUTH2_PROXY_OIDC_LOGOUT_HANDLER: "true"
+      OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:4180
+      OAUTH2_PROXY_UPSTREAMS: http://nginx:80
+      OAUTH2_PROXY_REDIRECT_URL: http://localhost:3000/oauth2/callback
+      OAUTH2_PROXY_COOKIE_SECRET: SECRET_KEY_MUST_BE_32_BYTES_LONG
+      OAUTH2_PROXY_COOKIE_SECURE: "false"
+      OAUTH2_PROXY_COOKIE_REFRESH: 0
+      OAUTH2_PROXY_PASS_AUTHORIZATION_HEADER: "true"
+      OAUTH2_PROXY_OIDC_EXTRA_AUDIENCES: oauth2-proxy
+      OAUTH2_PROXY_SKIP_OIDC_DISCOVERY: "false"
+      OAUTH2_PROXY_REDEEM_URL: http://keycloak:8080/realms/DemoKC/protocol/openid-connect/token
+      OAUTH2_PROXY_BACKEND_LOGOUT_URL: "http://keycloak:8080/realms/DemoKC/protocol/openid-connect/logout?id_token_hint={id_token}"
+      OAUTH2_PROXY_COOKIE_SAMESITE: "lax"
+      OAUTH2_PROXY_EMAIL_DOMAINS: "*"
+      OAUTH2_PROXY_EMAIL_DOMAIN: "*"
+      OAUTH2_PROXY_REVERSE_PROXY: "true"
+      OAUTH2_PROXY_WHITELIST_DOMAINS: .localhost:8080,.keycloak:8080
+      OAUTH2_PROXY_PROMPT: "select_account"
+      OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "false"
+
+    ports:
+      - "3000:4180"
+    restart: on-failure
+    depends_on:
+      - keycloak
+    networks:
+      - app-network
+
+  # 4. Nginx (変更なし)
+  nginx:
+    ports:
+      - "80:80"
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./vue-app/dist:/usr/share/nginx/html
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
