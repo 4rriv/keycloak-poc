@@ -1,0 +1,25 @@
+{
+  "realm" : "DemoKC",
+  "users" : [ {
+    "id" : "741c71a3-6105-4ad9-b28e-6c3a4cbe2c47",
+    "username" : "test",
+    "email" : "test@test.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1784186295933,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "f957e7d9-2e25-46e7-84fd-a8099e71b120",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1784186306392,
+      "secretData" : "{\"value\":\"iLiy5i3NH/XX4AxbL03sZ2RG2mclIXQkDDtJMC3jVhGRKOUm5XKgLmdr+jThDBl+6REB0BLwi+PvRzaHjxaThA==\",\"salt\":\"fZ7L0gMgxT06uXZpNftc1w==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-demokc" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}
