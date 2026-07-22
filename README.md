@@ -9,15 +9,11 @@
 
 システム構成 (Architecture)
 
-ユーザー → OAuth2-Proxy (Port 3000) → Nginx (Port 80 / 静的ファイル)
-            ↓ (OIDC 認証)
-          Keycloak (Port 8080) ← DB: Postgres
-
 | サービス名 | ポート (ホスト:コンテナ) | 役割 |
 | :--- | :--- | :--- |
 | **OAuth2-Proxy** | `3000:4180` | エントリーポイント。未認証リクエストを Keycloak へリダイレクト |
 | **Keycloak** | `8080:8080` | OIDC 認証プロバイダ (IdP) |
 | **Nginx** | `80:80` (内部) | Vue.js のビルド成果物を配信する Web サーバー |
-| **Postgres** | - (内部のみ) | Keycloak のデータ保存用 DB |
+| **Postgres** | - (内部) | Keycloak のデータ保存用 DB |
 
 ---
