@@ -5,6 +5,11 @@
 * **Docker Compose:** v2.40.3
 * **Node.js:** v26.4.0 (Vue.js ビルド用)
 
+node.js未インストールの場合、以下のコマンドでインストール可能
+```
+bash ./install_node.sh 
+```
+
 ---
 
 システム構成 (Architecture)
@@ -17,3 +22,5 @@
 | **Postgres** | - (内部) | Keycloak のデータ保存用 DB |
 
 ---
+
+
